@@ -26,11 +26,11 @@ public class OpenApiConfig {
 
 		
 
-		return new OpenAPI().addServersItem(new Server().url("https://api-estudo-production.up.railway.app/"))
-				.info(new Info().title("Api Estudo")
+		return new OpenAPI().addServersItem(new Server())
+				.info(new Info().title("Api Neki")
 						.version("V0.0.1")
-						.description("API ProjetoRural Petropolis")
-						.contact(new Contact().name("PMP")));
+						.description("API Neki")
+						.contact(new Contact().name("Neki")));
 	}
 
 }

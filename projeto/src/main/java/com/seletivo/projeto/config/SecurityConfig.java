@@ -81,7 +81,6 @@ public class SecurityConfig {
       mapper.writeValue(response.getOutputStream(), body);
     }
   }
-
   @Bean
   protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.cors().and().csrf().disable().authorizeHttpRequests()
@@ -96,5 +95,4 @@ public class SecurityConfig {
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
-
 }

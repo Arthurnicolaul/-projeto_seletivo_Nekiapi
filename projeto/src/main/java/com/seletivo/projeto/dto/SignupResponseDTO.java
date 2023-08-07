@@ -1,10 +1,13 @@
 package com.seletivo.projeto.dto;
 
+import java.util.List;
+
 public class SignupResponseDTO {
   private String accessToken;
   private String type = "Bearer";
-  private Integer id;
+  private Long id;
   private String username;
+  private List<String> roles;
 
   public String getAccessToken() {
     return accessToken;
@@ -22,11 +25,11 @@ public class SignupResponseDTO {
     this.type = type;
   }
 
-  public Integer getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -38,12 +41,18 @@ public class SignupResponseDTO {
     this.username = username;
   }
 
- 
+  public List<String> getRoles() {
+    return roles;
+  }
 
-  public SignupResponseDTO(String accessToken, Integer id, String username) {
+  public void setRoles(List<String> roles) {
+    this.roles = roles;
+  }
+
+  public SignupResponseDTO(String accessToken, Long id, String username,  List<String> roles) {
     this.accessToken = accessToken;
     this.id = id;
     this.username = username;
-    
+    this.roles = roles;
   }
 }

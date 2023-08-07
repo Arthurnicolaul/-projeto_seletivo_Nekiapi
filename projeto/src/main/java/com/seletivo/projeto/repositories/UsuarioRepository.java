@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.seletivo.projeto.model.Usuario;
 @Repository
-public interface UsuarioRepositores extends JpaRepository<Usuario, Long> {
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByusername(String username);
 
 }

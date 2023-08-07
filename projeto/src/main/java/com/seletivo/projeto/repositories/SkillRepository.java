@@ -5,6 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import com.seletivo.projeto.model.Skill;
 @Repository
-public interface SkillRepositores extends JpaRepository<Skill, Integer> {
+public interface SkillRepository extends JpaRepository<Skill, Long> {
+
+  boolean existsByNomeIgnoreCase(String nome);
+
+  Skill buscarSkillUsuario(Long id);
   
 }

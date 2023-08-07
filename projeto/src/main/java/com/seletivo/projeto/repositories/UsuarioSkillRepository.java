@@ -5,6 +5,12 @@ import org.springframework.stereotype.Repository;
 
 import com.seletivo.projeto.model.UsuarioSkill;
 @Repository
-public interface UsuarioSkillRepositores extends JpaRepository<UsuarioSkill, Integer> {
+public interface UsuarioSkillRepository extends JpaRepository<UsuarioSkill, Long> {
+
+  boolean existsByNomeIgnoreCase(int level);
+
+  UsuarioSkill buscarUsuarioSkillUsuario(Long id);
+
+  
   
 }

@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import com.seletivo.projeto.model.Usuario;
-import com.seletivo.projeto.repositories.UsuarioRepositores;
+import com.seletivo.projeto.repositories.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -16,12 +16,12 @@ import jakarta.transaction.Transactional;
 public class UserDetailsImpService implements UserDetailsService {
   
   @Autowired
-  UsuarioRepositores usuarioRepositores;
+  UsuarioRepository usuarioRepository;
 
   @Override
   @Transactional
   public UserDetails loadUserByUsername(String username) {
-    Optional<Usuario> user = usuarioRepositores.findByusername(username);
+    Optional<Usuario> user = usuarioRepository.findByusername(username);
     
 
     return UserDetailsImp.build(user.get());

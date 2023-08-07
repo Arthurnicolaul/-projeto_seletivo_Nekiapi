@@ -9,7 +9,7 @@ import com.seletivo.projeto.enums.RoleEnum;
 import com.seletivo.projeto.model.Role;
 
 @Repository
-public interface RoleRepositores extends JpaRepository<Role, Integer> {
+public interface RoleRepository extends JpaRepository<Role, Integer> {
 
   Optional<Role> findByName(RoleEnum roleUser);
   

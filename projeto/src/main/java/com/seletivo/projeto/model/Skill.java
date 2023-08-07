@@ -19,5 +19,6 @@ public class Skill {
     private Long id;
     @Column
     private String nome;
+    
 }
 
