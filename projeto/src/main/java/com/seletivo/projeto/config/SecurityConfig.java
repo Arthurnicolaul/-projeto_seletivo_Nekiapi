@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,12 +15,14 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seletivo.projeto.services.UserDetailsImpService;
@@ -81,18 +84,31 @@ public class SecurityConfig {
       mapper.writeValue(response.getOutputStream(), body);
     }
   }
-  @Bean
+@Bean
   protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.cors().and().csrf().disable().authorizeHttpRequests()
-        .requestMatchers("/**").permitAll()
-        //.requestMatchers("/produtores/**").hasAnyRole("ADMIN", "USER")
-        .anyRequest()
-        .authenticated().and().exceptionHandling().accessDeniedHandler(new AccessDeniedHandlerImpl()).and()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().exceptionHandling()
-        .authenticationEntryPoint(unauthorizedHandler);
+    http.authorizeHttpRequests(auth -> {
+     auth.requestMatchers(HttpMethod.POST, "/usuario/sign-in").permitAll();
+     auth.requestMatchers(HttpMethod.POST, "/usuario/register").permitAll();
+     auth.requestMatchers("/api-docs/**", "/index.html", "/swagger-ui/**").permitAll();
+    // auth.requestMatchers("/**").permitAll();
+    // auth.anyRequest().authenticated();
+    })
+       .cors(cors -> cors.configurationSource(request -> {
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.addAllowedOrigin("*"); // Permitir qualquer origem
+        corsConfig.addAllowedMethod("*"); // Permitir todos os métodos (GET, POST, etc.)
+        corsConfig.addAllowedHeader("*"); // Permitir todos os headers
+        return corsConfig;
+    }))
+        .csrf(AbstractHttpConfigurer::disable)
+        .exceptionHandling(handling -> handling.accessDeniedHandler(new AccessDeniedHandlerImpl()))
+        .sessionManagement(management -> management
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(handling -> handling
+            .authenticationEntryPoint(unauthorizedHandler));
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
+  
 }

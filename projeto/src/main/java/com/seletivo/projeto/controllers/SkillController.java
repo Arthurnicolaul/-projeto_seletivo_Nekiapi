@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 
 
 @RestController 
-@RequestMapping("/Skill")
+@RequestMapping("/skill")
 public class SkillController {
   @Autowired
   private SkillService skillService;
@@ -33,12 +33,13 @@ public class SkillController {
 
 	@GetMapping
 	public ResponseEntity<List<Skill>> getAllSkill(){
-		return new ResponseEntity<>(skillService.getAll(), HttpStatus.OK);
+		return new ResponseEntity<>(skillService.findAll(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
+	@SecurityRequirement(name = "token")
 	public ResponseEntity<Skill> getSkillById(@PathVariable Long id){
-		Skill skillResponse = skillService.getSkillById(id);
+		Skill skillResponse = skillService.findById(id);
 		if (null == skillResponse)
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		else
@@ -63,18 +64,20 @@ public class SkillController {
 	         
 
 	@PutMapping("/{id}")
+	@SecurityRequirement(name = "token")
 	public ResponseEntity<Skill> updateSkill(@RequestBody Skill skill, @PathVariable Long id) {
-		Skill verificar = skillService.getSkillById(id);
+		Skill verificar = skillService.updateSkill(id, skill);
 		if(verificar == null) {
 			return new ResponseEntity<>(null, HttpStatus.NOT_MODIFIED);
 		}
 		else 
-			return new ResponseEntity<>(skillService.updateSkill(skill), HttpStatus.OK);
+			return new ResponseEntity<>(skillService.updateSkill(id, skill), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
+	@SecurityRequirement(name = "token")
 	public ResponseEntity<Boolean> dellSkill(@PathVariable Long id) {
-		if (skillService.getSkillById(id) != null) {
+		if (skillService.findById(id) != null) {
 			Boolean resp = skillService.deleteSkill(id);
 			if (resp)
 				return new ResponseEntity<>(resp, HttpStatus.OK);

@@ -5,64 +5,63 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.seletivo.projeto.exception.SkillException;
 import com.seletivo.projeto.model.Skill;
 import com.seletivo.projeto.repositories.SkillRepository;
-import com.seletivo.projeto.repositories.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
 public class SkillService {
 
-  @Autowired
-  private SkillRepository skillRepository;
+    @Autowired
+    private SkillRepository skillRepository;
 
-	@Autowired
-	private UsuarioRepository usuarioRepository;
-
-
-  
-  public List<Skill> getAll() {
-		return skillRepository.findAll();
-	}
-	
-	public Skill getSkillById(Long id) {
-		return skillRepository.findById(id).orElse(null);
-	}
-	public Skill saveSkill(Skill skill) {
-		return skillRepository.save(skill);
-
-	}
-	public Skill updateSkill(Skill skill) {
-		return skillRepository.save(skill);
-	}
-	public boolean deleteSkill(Long id) {
-		skillRepository.deleteById(id);
-		Skill skillsDeletado = skillRepository.findById(id).orElse(null);
-		if (null == skillsDeletado) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	public SkillService(SkillRepository skillRepository, UsuarioRepository usuarioRepository) {
-        this.skillRepository = skillRepository;
-        this.usuarioRepository = usuarioRepository;
+    public List<Skill> findAll() {
+        return skillRepository.findAll();
     }
-    
+
+    public Skill findById(Long id) {
+        return skillRepository.findById(id).orElseThrow(() -> new SkillException("Skill not found, ID: " + id));
+    }
+
     @Transactional
-		public Skill registerSkill(Skill skill) throws IOException {
+    public Skill registerSkill(Skill skill) throws IOException {
+        if (skillRepository.existsByNomeIgnoreCase(skill.getNome())) {
+            throw new SkillException("Skill with name already exists: " + skill.getNome());
+        }
 
-    if (skillRepository.existsByNomeIgnoreCase(skill.getNome())) {
-        throw new RuntimeException("name already exists, " + skill.getNome());
+        Skill s = new Skill();
+        s.setNome(skill.getNome());
+        s = skillRepository.save(s);
+
+        return s;
     }
 
-    Skill s = new Skill();
-    s.setNome(skill.getNome());
-    s = skillRepository.save(s);
+    @Transactional
+    public Skill updateSkill(Long id, Skill skill) {
+        Skill existingSkill = skillRepository.findById(id).orElseThrow(() -> new SkillException("Skill not found, ID: " + id));
 
-    return s;
-}
+        if (!skill.getNome().equalsIgnoreCase(existingSkill.getNome()) && skillRepository.existsByNomeIgnoreCase(skill.getNome())) {
+            throw new SkillException("Skill with name already exists: " + skill.getNome());
+        }
+
+        existingSkill.setNome(skill.getNome());
+        existingSkill = skillRepository.save(existingSkill);
+
+        return existingSkill;
+    }
+
+    @Transactional
+    public boolean deleteSkill(Long id) {
+        Skill skill = skillRepository.findById(id).orElseThrow(() -> new SkillException("Skill not found, ID: " + id));
+
+        skillRepository.delete(skill);
+
+		return true;
+    }
+
 
 }
