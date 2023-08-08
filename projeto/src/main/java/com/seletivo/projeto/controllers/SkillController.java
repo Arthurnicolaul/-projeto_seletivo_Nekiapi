@@ -1,5 +1,7 @@
 package com.seletivo.projeto.controllers;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +15,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.seletivo.projeto.model.Skill;
-import com.seletivo.projeto.model.Usuario;
-import com.seletivo.projeto.repositories.UsuarioRepository;
 import com.seletivo.projeto.services.SkillService;
-import com.seletivo.projeto.services.UsuarioService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 
 
 @RestController 
@@ -28,10 +29,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class SkillController {
   @Autowired
   private SkillService skillService;
-  @Autowired
-  private UsuarioService usuarioService;
-  @Autowired
-  private UsuarioRepository usuarioRepository;
 
 
 	@GetMapping
@@ -40,7 +37,6 @@ public class SkillController {
 	}
 	
 	@GetMapping("/{id}")
-  @SecurityRequirement(name = "token")
 	public ResponseEntity<Skill> getSkillById(@PathVariable Long id){
 		Skill skillResponse = skillService.getSkillById(id);
 		if (null == skillResponse)
@@ -48,34 +44,28 @@ public class SkillController {
 		else
 		return new ResponseEntity<>(skillResponse, HttpStatus.OK);
 	}
+
+  @PostMapping("/register")
+  @SecurityRequirement(name = "token")
+  public ResponseEntity<Object> insert(@Valid @RequestBody Skill skill) throws IOException {
+    try {
+      Skill response = skillService.registerSkill(skill);
+      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+          .buildAndExpand(response.getId())
+          .toUri();
+      return ResponseEntity.created(uri).body(response);
+    } catch (RuntimeException e) {
+      return ResponseEntity.unprocessableEntity()
+          .body(HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+  }
+
 	         
-	@GetMapping("/Usuario/{idSkill}")
-  @SecurityRequirement(name = "token")
-	public ResponseEntity<Skill> getSkillByIdUsuario(@PathVariable Long idUsuario){
-		System.out.println(idUsuario);
-		Skill skillResponse = skillService.getSkillByIdUsuario(idUsuario);
-		if (null == skillResponse)
-			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-		else
-			return new ResponseEntity<>(skillResponse, HttpStatus.OK);
-	}
-@PostMapping("/{idUsuario}")
-	public ResponseEntity<Skill> saveSkill(@RequestBody Skill skill, @PathVariable Long idUsuario) {
-		Usuario usuario = usuarioService.getUsuarioById(idUsuario);
-		if(usuario != null) {
-			return new ResponseEntity<>(skillService.saveSkill(skill), HttpStatus.CREATED);
-		}
-		else {
-			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-		}
-	}
-	
-	@PutMapping("/{idUsuario}")
-  @SecurityRequirement(name = "token")
-	public ResponseEntity<Skill> updateSkill(@RequestBody Skill skill, @PathVariable Long idUsuario) {
-		Usuario usuario = usuarioService.getUsuarioById(idUsuario);
-		Skill verificar = skillService.getSkillByIdUsuario(idUsuario);
-		if(verificar == null && usuario == null) {
+
+	@PutMapping("/{id}")
+	public ResponseEntity<Skill> updateSkill(@RequestBody Skill skill, @PathVariable Long id) {
+		Skill verificar = skillService.getSkillById(id);
+		if(verificar == null) {
 			return new ResponseEntity<>(null, HttpStatus.NOT_MODIFIED);
 		}
 		else 
@@ -83,7 +73,6 @@ public class SkillController {
 	}
 
 	@DeleteMapping("/{id}")
-  @SecurityRequirement(name = "token")
 	public ResponseEntity<Boolean> dellSkill(@PathVariable Long id) {
 		if (skillService.getSkillById(id) != null) {
 			Boolean resp = skillService.deleteSkill(id);

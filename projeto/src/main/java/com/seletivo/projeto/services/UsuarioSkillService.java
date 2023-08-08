@@ -22,9 +22,7 @@ public class UsuarioSkillService {
   public List<UsuarioSkill> getAll() {
 		return usuarioskillRepository.findAll();
 	}
-  public UsuarioSkill getUsuarioSkillByIdUsuario(Long id) {
-		return usuarioskillRepository.buscarUsuarioSkillUsuario(id);
-	}
+  
 	
 	public UsuarioSkill getUsuarioSkillById(Long id) {
 		return usuarioskillRepository.findById(id).orElse(null);
@@ -45,23 +43,14 @@ public class UsuarioSkillService {
 			return false;
 		}
 	}
-	public UsuarioSkillService(UsuarioSkillRepository usuarioskillRepository, UsuarioRepository usuarioRepository) {
-        this.usuarioskillRepository = usuarioskillRepository;
-        this.usuarioRepository = usuarioRepository;
-    }
+
 
      @Transactional
 		public UsuarioSkill registerUsuarioSkill(UsuarioSkill usuarioskill) throws IOException {
 
-    if (usuarioskillRepository.existsByNomeIgnoreCase(usuarioskill.getLevel())) {
-        throw new RuntimeException("name already exists, " + usuarioskill.getLevel());
-    }
+   
 
-    UsuarioSkill s = new UsuarioSkill();
-    s.setLevel(usuarioskill.getLevel());
-    s = usuarioskillRepository.save(s);
-
-    return s;
+    return  usuarioskillRepository.save(usuarioskill);
 }
 
 }

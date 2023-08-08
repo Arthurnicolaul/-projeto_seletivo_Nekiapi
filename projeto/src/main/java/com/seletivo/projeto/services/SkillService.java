@@ -30,9 +30,6 @@ public class SkillService {
 	public Skill getSkillById(Long id) {
 		return skillRepository.findById(id).orElse(null);
 	}
-	public Skill getSkillByIdUsuario(Long id) {
-		return skillRepository.buscarSkillUsuario(id);
-	}
 	public Skill saveSkill(Skill skill) {
 		return skillRepository.save(skill);
 

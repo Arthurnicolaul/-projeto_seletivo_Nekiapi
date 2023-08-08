@@ -7,10 +7,6 @@ import com.seletivo.projeto.model.UsuarioSkill;
 @Repository
 public interface UsuarioSkillRepository extends JpaRepository<UsuarioSkill, Long> {
 
-  boolean existsByNomeIgnoreCase(int level);
 
-  UsuarioSkill buscarUsuarioSkillUsuario(Long id);
-
-  
   
 }

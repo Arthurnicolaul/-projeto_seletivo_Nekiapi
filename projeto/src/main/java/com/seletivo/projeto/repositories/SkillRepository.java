@@ -9,6 +9,5 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
 
   boolean existsByNomeIgnoreCase(String nome);
 
-  Skill buscarSkillUsuario(Long id);
   
 }
