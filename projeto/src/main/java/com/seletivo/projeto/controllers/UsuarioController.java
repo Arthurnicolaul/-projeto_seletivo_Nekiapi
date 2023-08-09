@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,6 @@ import com.seletivo.projeto.services.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -59,6 +59,23 @@ public class UsuarioController {
 			SignupResponseDTO signupResponse = usuarioService.authenticateUser(loginRequest);
 			System.out.println(signupResponse);
 			return ResponseEntity.ok().header("Authorization", signupResponse.getAccessToken()).body(signupResponse);
+		} catch (UsuarioException e) {
+			return ResponseEntity.unprocessableEntity().body(
+					new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, "Unprocessable Entity", e.getLocalizedMessage()));
+		}
+	}
+	@PostMapping("/sign-up")
+	@Operation(summary = "Sign In Service", description = "Sign In Service", responses = {
+			@ApiResponse(responseCode = "200", description = "Successfully Singned In!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SignupResponseDTO.class))),
+			@ApiResponse(responseCode = "400", ref = "BadRequest"),
+			@ApiResponse(responseCode = "401", ref = "badcredentials"),
+			@ApiResponse(responseCode = "422", ref = "unprocessableEntity"),
+			@ApiResponse(responseCode = "500", ref = "internalServerError") })
+	public ResponseEntity<Object> register(@Valid @RequestBody Usuario usuario) {
+		try {
+			Usuario usuario2 = usuarioService.saveUsuario(usuario);
+			System.out.println(usuario2);
+			return ResponseEntity.ok().body(usuario2);
 		} catch (UsuarioException e) {
 			return ResponseEntity.unprocessableEntity().body(
 					new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, "Unprocessable Entity", e.getLocalizedMessage()));

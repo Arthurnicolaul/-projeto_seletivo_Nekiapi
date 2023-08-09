@@ -88,8 +88,8 @@ public class SecurityConfig {
   protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.authorizeHttpRequests(auth -> {
      auth.requestMatchers(HttpMethod.POST, "/usuario/sign-in").permitAll();
-     auth.requestMatchers(HttpMethod.POST, "/usuario/register").permitAll();
-     auth.requestMatchers("/api-docs/**", "/index.html", "/swagger-ui/**").permitAll();
+     auth.requestMatchers(HttpMethod.POST, "/usuario/sign-up").permitAll();
+     auth.requestMatchers("/api-docs/**", "/index.html", "/swagger-ui/**","http://localhost:8080/**").permitAll();
     // auth.requestMatchers("/**").permitAll();
     // auth.anyRequest().authenticated();
     })

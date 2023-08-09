@@ -13,11 +13,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seletivo.projeto.model.Usuario;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
-@Data
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Service
@@ -96,6 +95,26 @@ public class UserDetailsImp implements UserDetails {
   public String getUsername() {
     // TODO Auto-generated method stub
     return usename;
+  }
+
+
+  public Long getId() {
+    return id;
+  }
+
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+
+  public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+    this.authorities = authorities;
   }
 
  

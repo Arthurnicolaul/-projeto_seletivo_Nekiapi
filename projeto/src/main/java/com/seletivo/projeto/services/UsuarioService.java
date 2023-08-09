@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.seletivo.projeto.dto.LoginRequestDTO;
 import com.seletivo.projeto.dto.SignupResponseDTO;
 import com.seletivo.projeto.enums.RoleEnum;
+import com.seletivo.projeto.exception.UsuarioException;
 import com.seletivo.projeto.model.Role;
 import com.seletivo.projeto.model.Usuario;
 import com.seletivo.projeto.repositories.RoleRepository;
@@ -50,7 +51,7 @@ public class UsuarioService {
   @Transactional
   public SignupResponseDTO authenticateUser(LoginRequestDTO loginRequest) {
     Authentication authentication = authenticationManager
-        .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsename(),
+        .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
             loginRequest.getPassword()));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -76,7 +77,7 @@ public class UsuarioService {
 	public Usuario saveUsuario(Usuario usuario) {
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepositores.findByName(RoleEnum.USER)
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                .orElseThrow(() -> new UsuarioException("Error: Role is not found."));
         roles.add(userRole);
         usuario.setRoles(roles);
 				usuario.setSenha(encoder.encode(usuario.getSenha()));

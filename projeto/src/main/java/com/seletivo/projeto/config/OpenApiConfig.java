@@ -73,7 +73,7 @@ public class OpenApiConfig {
 		components.addResponses("unprocessableEntity", unprocessableEntityAPI);
 		components.addResponses("internalServerError", internalServerErrorAPI);
 
-		return new OpenAPI().addServersItem(new Server().url("localhost:8080"))
+		return new OpenAPI().addServersItem(new Server().url("http://localhost:8080"))
 				.components(components)
 				.info(new Info().title("Api Neki")
 						.version("V0.0.1")

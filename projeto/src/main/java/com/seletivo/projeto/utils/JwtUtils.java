@@ -21,30 +21,19 @@ import io.jsonwebtoken.UnsupportedJwtException;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("8H3n7Z2aW9s7C4e1r5T6o")
+    @Value("M7jP9kR3fT2bE5gS8eC1rE4t")
     private String jwtSecret;
 
-    @Value("86400000")
+    @Value("3600000") // Um JWT expirará após 1 hora (60 minutos * 60 segundos * 1000 milissegundos)
     private int jwtExpirationMs;
 
     public String generateJwtToken(UserDetailsImp userPrincipal) {
         return generateTokenFromUsername(userPrincipal.getUsername(), userPrincipal.getId());
     }
 
-    private String generateTokenFromUsername(String username, Integer id) {
-    	return Jwts.builder()
-                .setSubject(username)
-                .claim("userId", id)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
-    }
-	
-
-	public String generateTokenFromUsername(String cpf, Long userId) {
+    public String generateTokenFromUsername(String username, Long userId) {
         return Jwts.builder()
-                .setSubject(cpf)
+                .setSubject(username)
                 .claim("userId", userId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
