@@ -1,7 +1,6 @@
 package com.seletivo.projeto.controllers;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.seletivo.projeto.model.Skill;
 import com.seletivo.projeto.services.SkillService;
@@ -46,15 +44,15 @@ public class SkillController {
 		return new ResponseEntity<>(skillResponse, HttpStatus.OK);
 	}
 
+	
+
   @PostMapping("/register")
   @SecurityRequirement(name = "token")
   public ResponseEntity<Object> insert(@Valid @RequestBody Skill skill) throws IOException {
     try {
       Skill response = skillService.registerSkill(skill);
-      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-          .buildAndExpand(response.getId())
-          .toUri();
-      return ResponseEntity.created(uri).body(response);
+
+      return ResponseEntity.ok().body(response);
     } catch (RuntimeException e) {
       return ResponseEntity.unprocessableEntity()
           .body(HttpStatus.UNPROCESSABLE_ENTITY);

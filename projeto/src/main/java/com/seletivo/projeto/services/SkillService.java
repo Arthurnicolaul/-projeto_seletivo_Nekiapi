@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.seletivo.projeto.exception.SkillException;
 import com.seletivo.projeto.model.Skill;
@@ -23,9 +22,13 @@ public class SkillService {
         return skillRepository.findAll();
     }
 
+
     public Skill findById(Long id) {
-        return skillRepository.findById(id).orElseThrow(() -> new SkillException("Skill not found, ID: " + id));
+        Skill skill = skillRepository.findById(id).orElseThrow(() -> new SkillException("Skill not found, ID: " + id));
+        return skill;
     }
+
+  
 
     @Transactional
     public Skill registerSkill(Skill skill) throws IOException {
@@ -34,6 +37,8 @@ public class SkillService {
         }
 
         Skill s = new Skill();
+        s.setDescription(skill.getDescription());
+        s.setImagem(skill.getImagem());
         s.setNome(skill.getNome());
         s = skillRepository.save(s);
 

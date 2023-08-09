@@ -14,8 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.seletivo.projeto.dto.LoginRequestDTO;
+import com.seletivo.projeto.dto.SignupRegisterResponseDTO;
 import com.seletivo.projeto.dto.SignupResponseDTO;
 import com.seletivo.projeto.enums.RoleEnum;
+import com.seletivo.projeto.exception.UsernameException;
 import com.seletivo.projeto.exception.UsuarioException;
 import com.seletivo.projeto.model.Role;
 import com.seletivo.projeto.model.Usuario;
@@ -74,7 +76,8 @@ public class UsuarioService {
       return "Log out successful!";
   }
   
-	public Usuario saveUsuario(Usuario usuario) {
+	public SignupRegisterResponseDTO saveUsuario(Usuario usuario) {
+   
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepositores.findByName(RoleEnum.USER)
                 .orElseThrow(() -> new UsuarioException("Error: Role is not found."));
@@ -83,7 +86,7 @@ public class UsuarioService {
 				usuario.setSenha(encoder.encode(usuario.getSenha()));
 
 				List<RoleEnum> rolesList = roles.stream().map(Role::getName).collect(Collectors.toList());
-		return usuarioRepository.save(usuario);
+		return new SignupRegisterResponseDTO(usuarioRepository.save(usuario), rolesList);
 
 	}
   public Usuario updateusuario(Usuario usuario, Long id) {
@@ -92,7 +95,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         roles.add(userRole);
         Usuario usuario2 = usuarioRepository.findById(id).orElse(null);
-        usuario.setSenha(usuario2.getSenha());
+        usuario.setUsername(usuario2.getUsername());
         usuario.setRoles(roles);
         usuario.setSenha(encoder.encode(usuario.getSenha()));
 		return usuarioRepository.save(usuario);

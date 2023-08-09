@@ -29,14 +29,6 @@ public class Usuario {
     private String username;
     @Column
     private String senha;
-    @Email
-    @Column
-    private String email;
-    @Column
-    private String nomeCompleto;
-    @Column
-    private String sexo;
-
     @ManyToMany(fetch = FetchType.LAZY)
 	  @JoinTable(name = "role_user", joinColumns = @JoinColumn(name = "id_user"), inverseJoinColumns = @JoinColumn(name = "id_role"))
 	  private Set<Role> roles = new HashSet<>();

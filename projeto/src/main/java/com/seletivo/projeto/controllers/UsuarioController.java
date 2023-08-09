@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seletivo.projeto.dto.LoginRequestDTO;
+import com.seletivo.projeto.dto.SignupRegisterResponseDTO;
 import com.seletivo.projeto.dto.SignupResponseDTO;
 import com.seletivo.projeto.exception.ApiError;
 import com.seletivo.projeto.exception.UsuarioException;
@@ -73,7 +74,7 @@ public class UsuarioController {
 			@ApiResponse(responseCode = "500", ref = "internalServerError") })
 	public ResponseEntity<Object> register(@Valid @RequestBody Usuario usuario) {
 		try {
-			Usuario usuario2 = usuarioService.saveUsuario(usuario);
+			SignupRegisterResponseDTO usuario2 = usuarioService.saveUsuario(usuario);
 			System.out.println(usuario2);
 			return ResponseEntity.ok().body(usuario2);
 		} catch (UsuarioException e) {
@@ -90,13 +91,7 @@ public class UsuarioController {
 		else
 			return new ResponseEntity<>(usuarioResponse, HttpStatus.OK);
 	}
-  @PostMapping
-	public ResponseEntity<Usuario> saveUsuario(@RequestBody Usuario usuario) {
-		if (usuario == null)
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-		else
-			return new ResponseEntity<>(usuarioService.saveUsuario(usuario), HttpStatus.OK);
-	}
+
   @PutMapping("/{id}")
   @SecurityRequirement(name = "token")
 	public ResponseEntity<Usuario> updateUsuario(@RequestBody Usuario usuario, @PathVariable Long id) {

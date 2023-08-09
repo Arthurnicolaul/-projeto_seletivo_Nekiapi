@@ -1,0 +1,8 @@
+precisa adicionar no banco a mao as roles 
+
+
+{Role
+id:1 name:ADMIN
+id:2 name:USER
+}
+
